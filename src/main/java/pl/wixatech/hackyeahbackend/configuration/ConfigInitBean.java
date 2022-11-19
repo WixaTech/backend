@@ -6,6 +6,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import pl.wixatech.hackyeahbackend.validation.plugin.FileNameValidationPlugin;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -102,26 +103,26 @@ public class ConfigInitBean {
     private void fileNameParams() {
         Set<ValidationField> validations = new HashSet<>();
         validations.add(ValidationField.builder()
-                .keyName("forbiden_chars")
+            .keyName(FileNameValidationPlugin.FORBIDDEN_CHARS)
                 .content(objectMapper.writeValueAsString(List.of("~", "\"", "#", "%", "&", "*", ":", "<", ">", "?", "!", "/", "\\", "{", "|", "}")))
                 .validationFieldType(ValidationFieldType.LIST)
                 .build());
         validations.add(ValidationField.builder()
-                .keyName("trim")
+            .keyName(FileNameValidationPlugin.TRIM)
                 .content(objectMapper.writeValueAsString(List.of("space_before", "space_after")))
                 .validationFieldType(ValidationFieldType.LIST)
                 .build());
         validations.add(ValidationField.builder()
-                .keyName("char_code")
+            .keyName(FileNameValidationPlugin.CHAR_CODE)
                 .content(objectMapper.writeValueAsString("UTF-8"))
                 .validationFieldType(ValidationFieldType.STRING)
                 .build());
         validations.add(ValidationField.builder()
-                .keyName("full_filename_length")
-                .content(objectMapper.writeValueAsString("255"))
-                .validationFieldType(ValidationFieldType.INT)
-                .build());
-        addConfig("filename_params", validations);
+            .keyName(FileNameValidationPlugin.FULL_FILENAME_LENGTH)
+            .content(objectMapper.writeValueAsString("255"))
+            .validationFieldType(ValidationFieldType.INT)
+            .build());
+        addConfig(FileNameValidationPlugin.GROUP_NAME, validations);
     }
 
     @SneakyThrows

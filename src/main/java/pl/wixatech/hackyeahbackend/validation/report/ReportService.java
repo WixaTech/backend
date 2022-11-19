@@ -25,7 +25,7 @@ public class ReportService {
     return validationResults.stream().collect(Collectors.groupingBy(ValidationResult::getGroupName))
         .entrySet()
         .stream()
-        .filter(entry -> entry.getValue().isEmpty())
+        .filter(entry -> !getMessagesInGroup(entry).isEmpty())
         .map(entry -> new ErrorGroup(entry.getKey(), getMessagesInGroup(entry)))
         .collect(Collectors.toSet());
   }
