@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.wixatech.hackyeahbackend.document.dto.DocumentDTO;
 import pl.wixatech.hackyeahbackend.validation.report.Report;
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,12 @@ public class DocumentRestController {
   }
 
   private DocumentDTO convertToDocumentDTO(Document document) {
-    return new DocumentDTO(document.getId(), document.getDocumentStatus(), document.getReports());
+    String fileName = getFileName(document);
+    return new DocumentDTO(document.getId(), document.getDocumentStatus(), document.getCreated(), fileName,
+        document.getReports());
+  }
+
+  private String getFileName(Document document) {
+    return Paths.get(document.getFilePath()).getFileName().toString();
   }
 }

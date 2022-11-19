@@ -28,7 +28,7 @@ public class FileController {
     @PostMapping(path = "/upload", consumes = "multipart/form-data")
     public UploadFileResponse uploadFile(@RequestPart("file") MultipartFile file) {
         try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
-            File fileToSave = new File(file.getName());
+            File fileToSave = new File(file.getOriginalFilename());
             copyInputStreamToFileJava9(inputStream, fileToSave);
             documentService.saveDocument(null, fileToSave.getAbsolutePath());
         } catch (IOException e) {

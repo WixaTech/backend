@@ -42,7 +42,7 @@ public class DocumentService {
   }
 
   public List<Document> getAllNewDocuments() {
-    return documentRepository.findAllByDocumentStatus(DocumentStatus.NEW);
+    return documentRepository.findAllByDocumentStatus(DocumentStatus.UNVERIFIED);
   }
 
   @Transactional
@@ -70,10 +70,10 @@ public class DocumentService {
   }
 
   private void validationFailed(Document document) {
-    document.setDocumentStatus(DocumentStatus.VALIDATION_FAIL);
+    document.setDocumentStatus(DocumentStatus.INVALID);
   }
 
   private void completed(Document document) {
-    document.setDocumentStatus(DocumentStatus.COMPLETED);
+    document.setDocumentStatus(DocumentStatus.VALID);
   }
 }

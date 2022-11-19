@@ -7,6 +7,7 @@ import lombok.ToString;
 import pl.wixatech.hackyeahbackend.document.DocumentStatus;
 import pl.wixatech.hackyeahbackend.validation.report.Report;
 
+import java.time.Instant;
 import java.util.Set;
 
 @Getter
@@ -18,6 +19,10 @@ public class DocumentDTO {
   private final Long id;
 
   private final DocumentStatus status;
+
+  private final Instant addedDate;
+
+  private final String fileName;
 
   private final Set<Report> reports;
 

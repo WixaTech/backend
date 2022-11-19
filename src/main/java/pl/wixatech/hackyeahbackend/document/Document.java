@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import pl.wixatech.hackyeahbackend.validation.report.Report;
@@ -34,7 +35,7 @@ public class Document {
   public Document(String contentType, String filePath) {
     this.contentType = contentType;
     this.filePath = filePath;
-    this.documentStatus = DocumentStatus.NEW;
+    this.documentStatus = DocumentStatus.UNVERIFIED;
   }
 
   @Id
@@ -49,6 +50,9 @@ public class Document {
   private DocumentStatus documentStatus;
 
   private Instant parseStartAt;
+
+  @CreationTimestamp
+  private Instant created;
 
   @OneToMany(cascade = CascadeType.ALL)
   @Fetch(FetchMode.JOIN)
