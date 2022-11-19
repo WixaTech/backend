@@ -3,6 +3,7 @@ package pl.wixatech.hackyeahbackend.validation.plugin;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import pl.wixatech.hackyeahbackend.configuration.ConfigService;
 import pl.wixatech.hackyeahbackend.configuration.ValidationField;
@@ -28,10 +29,14 @@ public class FileNameValidationPlugin implements ValidationPlugin {
     public static final String TRIM = "trim";
     public static final String CHAR_CODE = "charCode";
     public static final String FULL_FILENAME_LENGTH = "fullFilenameLength";
+    public static final String SPACE_BEFORE = "space_before";
+    public static final String SPACE_AFTER = "space_after";
 
     Map<String, BiFunction<String, ValidationField, Optional<String>>> VALIDATION_FUNCTION_BY_PARAMETER_NAME =
-        Map.of(FORBIDDEN_CHARS, validateForbiddenChars());
-
+        Map.of(FORBIDDEN_CHARS, validateForbiddenChars(),
+            TRIM, validateTrailingSpaces(),
+            CHAR_CODE, validateCharCode(),
+            FULL_FILENAME_LENGTH, validateFullFileNameLength());
 
     private final ConfigService configService;
     private final ValidationFieldMapper fieldMapperService;
@@ -84,6 +89,50 @@ public class FileNameValidationPlugin implements ValidationPlugin {
 
             return forbiddenChars.stream().anyMatch(fileName::contains) ? Optional.of(
                 String.format("File name %s contains some of the forbidden characters: %s", fileName, forbiddenChars))
+                : Optional.empty();
+        };
+    }
+
+    private BiFunction<String, ValidationField, Optional<String>> validateTrailingSpaces() {
+        return (fileName, validationField) -> {
+            final List<String> trailingSettings = (List<String>) fieldMapperService.mapValue(validationField);
+            String errorMessage = "";
+
+            if (trailingSettings.contains(SPACE_BEFORE)) {
+                String ltrim = StringUtils.stripStart(fileName, null);
+
+                if (!ltrim.equals(fileName)) {
+                    errorMessage += "Beginning of the file name contains trailing spaces. ";
+                }
+            }
+
+            if (trailingSettings.contains(SPACE_AFTER)) {
+                String rtrim = StringUtils.stripEnd(fileName, null);
+
+                if (!rtrim.equals(fileName)) {
+                    errorMessage += "End of the file name contains trailing spaces. ";
+                }
+
+            }
+
+            return errorMessage.isEmpty() ? Optional.empty() : Optional.of(errorMessage);
+        };
+    }
+
+
+    private BiFunction<String, ValidationField, Optional<String>> validateCharCode() {
+        return (fileName, validationField) -> {
+            return Optional.empty(); // TODO: try to validate it later
+        };
+    }
+
+
+    private BiFunction<String, ValidationField, Optional<String>> validateFullFileNameLength() {
+        return (fileName, validationField) -> {
+            final int maximumLength = (Integer) fieldMapperService.mapValue(validationField);
+
+            return fileName.length() > maximumLength ? Optional.of(
+                String.format("File name %s is longer than allowed %d characters", fileName, maximumLength))
                 : Optional.empty();
         };
     }

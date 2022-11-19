@@ -109,7 +109,8 @@ public class ConfigInitBean {
                 .build());
         validations.add(ValidationField.builder()
             .keyName(FileNameValidationPlugin.TRIM)
-                .content(objectMapper.writeValueAsString(List.of("space_before", "space_after")))
+            .content(objectMapper.writeValueAsString(
+                List.of(FileNameValidationPlugin.SPACE_BEFORE, FileNameValidationPlugin.SPACE_AFTER)))
                 .validationFieldType(ValidationFieldType.LIST)
                 .build());
         validations.add(ValidationField.builder()
