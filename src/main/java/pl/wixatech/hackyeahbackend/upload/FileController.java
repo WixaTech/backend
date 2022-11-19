@@ -42,15 +42,10 @@ public class FileController {
 
     @PostMapping(path = "/upload", consumes = "multipart/form-data")
     public UploadFileResponse uploadFile(@RequestPart("file") MultipartFile file) {
-        ContentHandler textHandler;
-        Metadata metadata;
+
         //TODO validacja czy to jest wgl pdf
         try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
-//            textHandler = new BodyContentHandler();
-//            metadata = new Metadata();
-//            PDFParser parser = new PDFParser();
-//            ParseContext context = new ParseContext();
-//            parser.parse(inputStream, textHandler, metadata, context);
+
             File fileToSave = new File(file.getName());
 
             copyInputStreamToFileJava9(inputStream, fileToSave);
@@ -61,12 +56,6 @@ public class FileController {
             return new UploadFileResponse(false);
         }
 
-
-
-//        out.println("Title: " + metadata.get("title"));
-//        out.println("Author: " + metadata.get("Author"));
-//        documentService.saveDocument(metadata.get("dc:title"));
-        
         return new UploadFileResponse(true);
     }
     private static void copyInputStreamToFileJava9(InputStream input, File file)
@@ -79,24 +68,24 @@ public class FileController {
 
     }
 
-
-    @GetMapping(path = "/test123")
-    public String getFile (){
-        Document byId = documentService.getById(1L);
+    @GetMapping(path = "/document/{id}")
+    public String getFile (@PathVariable Long id){
+        Document byId = documentService.getById(id);
         File file = new File(byId.getFilePath());
         return file.getName();
     }
 
-
-//    @GetMapping("/download/{id}")
-//    public ResponseEntity<byte[]> getFile(@PathVariable String id) {
-//        //TODO find file by id
-//
-//        return ResponseEntity
-//                .ok()
-//                .contentLength(taskInstruction.getContent().length)
-//                .contentType(MediaType.asMediaType(taskInstruction.getMimeType()))
-//                .body(taskInstruction.getContent());
-//    }
-
 }
+
+//    ContentHandler textHandler;
+//    Metadata metadata;
+
+//            textHandler = new BodyContentHandler();
+//            metadata = new Metadata();
+//            PDFParser parser = new PDFParser();
+//            ParseContext context = new ParseContext();
+//            parser.parse(inputStream, textHandler, metadata, context);
+
+//        out.println("Title: " + metadata.get("title"));
+//        out.println("Author: " + metadata.get("Author"));
+//        documentService.saveDocument(metadata.get("dc:title"));
