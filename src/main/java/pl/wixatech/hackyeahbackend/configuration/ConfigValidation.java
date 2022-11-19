@@ -9,13 +9,17 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.Transient;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -37,5 +41,9 @@ public class ConfigValidation {
 
     private String validationGroup;
 
-
+    @Transient
+    public Map<String, ValidationField> getValidationFieldByName() {
+        return configMap.stream()
+            .collect(Collectors.toMap(ValidationField::getKeyName, Function.identity()));
+    }
 }
