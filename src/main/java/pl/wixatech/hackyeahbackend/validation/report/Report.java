@@ -7,12 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Table(name = "report")
@@ -24,8 +29,9 @@ import java.time.Instant;
 @AllArgsConstructor
 public class Report {
 
-  public Report(boolean isSuccess) {
+  public Report(boolean isSuccess, Set<ErrorGroup> errorGroups) {
     this.isSuccess = isSuccess;
+    this.errorGroups = errorGroups;
   }
 
   @Id
@@ -36,9 +42,8 @@ public class Report {
 
   @CreationTimestamp
   private Instant created;
-//  private List<String> errorMessages;
 
-//  @ManyToOne
-//  @JoinColumn(name ="document_id", referencedColumnName = "id")
-//  private Document document;
+  @OneToMany(cascade = CascadeType.ALL)
+  @Fetch(FetchMode.JOIN)
+  private Set<ErrorGroup> errorGroups;
 }

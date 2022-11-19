@@ -50,7 +50,6 @@ public class Document {
 
   private Instant parseStartAt;
 
-  // TODO: not nice
   @OneToMany(cascade = CascadeType.ALL)
   @Fetch(FetchMode.JOIN)
   private Set<Report> reports;
