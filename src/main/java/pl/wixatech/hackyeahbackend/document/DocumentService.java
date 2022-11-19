@@ -8,6 +8,7 @@ import pl.wixatech.hackyeahbackend.validation.report.Report;
 import pl.wixatech.hackyeahbackend.validation.report.ReportService;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -26,6 +27,14 @@ public class DocumentService {
   @Transactional(readOnly = true)
   public List<Document> getAllDocuments() {
     return documentRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
+  public Report getRecentReport(Long documentId) {
+    Comparator<Report> comparator = Comparator.comparing(Report::getCreated);
+
+    return documentRepository.findById(documentId).orElseThrow().getReports().stream()
+        .max(comparator).orElseThrow();
   }
 
   public Document getById(long l) {

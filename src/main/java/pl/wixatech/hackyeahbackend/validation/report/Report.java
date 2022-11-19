@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.Instant;
 
 @Entity
 @Table(name = "report")
@@ -31,6 +33,9 @@ public class Report {
   private Long id;
 
   private boolean isSuccess;
+
+  @CreationTimestamp
+  private Instant created;
 //  private List<String> errorMessages;
 
 //  @ManyToOne
