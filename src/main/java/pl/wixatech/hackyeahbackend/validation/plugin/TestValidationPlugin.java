@@ -20,8 +20,4 @@ public class TestValidationPlugin implements ValidationPlugin{
                 .build();
     }
 
-    @Override
-    public int getPriority() {
-        return 1;
-    }
 }

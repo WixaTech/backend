@@ -39,9 +39,122 @@ public class ConfigInitBean {
 
         fileNameParams();
         fileParams();
+        optimizationParams();
+        fontParams();
+        lineParams();
+        formParams();
+        tintParams();
+        imagesParams();
         technicalParams();
 
 
+    }
+
+    @SneakyThrows
+    private void imagesParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("min_dpi")
+                .content(objectMapper.writeValueAsString("150"))
+                .validationFieldType(ValidationFieldType.INT)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("optimal_dpi_scale_1_to_1")
+                .content(objectMapper.writeValueAsString("300"))
+                .validationFieldType(ValidationFieldType.INT)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("modes")
+                .content(objectMapper.writeValueAsString(List.of("CMYK", "8-bit")))
+                .validationFieldType(ValidationFieldType.LIST)
+                .build());
+        addConfig("images", validations);
+    }
+
+    @SneakyThrows
+    private void tintParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("tint")
+                .content(objectMapper.writeValueAsString("CMYK"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        addConfig("tint", validations);
+    }
+
+    @SneakyThrows
+    private void formParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("allowed")
+                .content(objectMapper.writeValueAsString("false"))
+                .validationFieldType(ValidationFieldType.BOOLEAN)
+                .build());
+        addConfig("form", validations);
+    }
+
+    @SneakyThrows
+    private void lineParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("single_color_min_thickness")
+                .content(objectMapper.writeValueAsString("0.1"))
+                .validationFieldType(ValidationFieldType.DOUBLE)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("contra_or_multiple_color_min_thickness")
+                .content(objectMapper.writeValueAsString("0.5"))
+                .validationFieldType(ValidationFieldType.DOUBLE)
+                .build());
+        addConfig("lines", validations);
+    }
+
+    @SneakyThrows
+    private void fontParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("rule")
+                .content(objectMapper.writeValueAsString("embeded_in_doc"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("single_color_one_element_font")
+                .content(objectMapper.writeValueAsString("5"))
+                .validationFieldType(ValidationFieldType.INT)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("single_color_two_element_font")
+                .content(objectMapper.writeValueAsString("6"))
+                .validationFieldType(ValidationFieldType.INT)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("multiple_color_one_element_font")
+                .content(objectMapper.writeValueAsString("8"))
+                .validationFieldType(ValidationFieldType.INT)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("multiple_color_two_element_font")
+                .content(objectMapper.writeValueAsString("10"))
+                .validationFieldType(ValidationFieldType.INT)
+                .build());
+        addConfig("font", validations);
+    }
+
+    @SneakyThrows
+    private void optimizationParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("generation_type")
+                .content(objectMapper.writeValueAsString("composite"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("to_delete")
+                .content(objectMapper.writeValueAsString(List.of("tab", "hyperlink", "bad_links", "inactive_layers")))
+                .validationFieldType(ValidationFieldType.LIST)
+                .build());
+
+        addConfig("optimization", validations);
     }
 
     @SneakyThrows

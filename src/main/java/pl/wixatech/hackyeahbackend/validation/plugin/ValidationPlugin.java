@@ -5,5 +5,7 @@ import pl.wixatech.hackyeahbackend.document.Document;
 public interface ValidationPlugin {
     ValidationResult validate(Document id);
 
-    int getPriority();
+    default int getPriority() {
+        return Integer.MAX_VALUE;
+    }
 }
