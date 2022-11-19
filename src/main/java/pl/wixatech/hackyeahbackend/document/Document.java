@@ -4,17 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import pl.wixatech.hackyeahbackend.validation.report.Report;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Table(name = "document")
@@ -35,7 +40,7 @@ public class Document {
   @Id
   @GeneratedValue
   private Long id;
-  
+
   private String contentType;
 
   private String filePath;
@@ -43,5 +48,10 @@ public class Document {
   @Enumerated(EnumType.STRING)
   private DocumentStatus documentStatus;
 
-  private LocalDateTime parseStartAt;
+  private Instant parseStartAt;
+
+  // TODO: not nice
+  @OneToMany(cascade = CascadeType.ALL)
+  @Fetch(FetchMode.JOIN)
+  private Set<Report> reports;
 }

@@ -35,7 +35,7 @@ public class DocumentValidationWorker {
 
     @Scheduled(fixedDelay = 1000)
     public void execute() {
-        log.info("Checking if there is document to parse");
+        log.debug("Checking if there is document to parse");
         List<Document> allNewDocuments = documentService.getAllNewDocuments();
         if (allNewDocuments.isEmpty()) {
             log.debug("No new documents to parse");

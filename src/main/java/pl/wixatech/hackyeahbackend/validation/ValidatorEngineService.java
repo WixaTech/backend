@@ -21,12 +21,6 @@ public class ValidatorEngineService {
                 .map(validationPlugin -> validationPlugin.validate(document))
                 .toList();
 
-        boolean validationFailed = validationResults.stream().anyMatch(validationResult -> !validationResult.isValid());
-        if (validationFailed) {
-            documentService.validationFailed(document);
-            //TODO create report with errors
-        } else {
-            documentService.completed(document);
-        }
+        documentService.addReportToDocument(document, validationResults);
     }
 }

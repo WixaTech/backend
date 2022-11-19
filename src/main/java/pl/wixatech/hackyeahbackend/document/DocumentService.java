@@ -1,52 +1,79 @@
 package pl.wixatech.hackyeahbackend.document;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.wixatech.hackyeahbackend.validation.plugin.ValidationResult;
+import pl.wixatech.hackyeahbackend.validation.report.Report;
+import pl.wixatech.hackyeahbackend.validation.report.ReportService;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class DocumentService {
 
-    private final DocumentRepository documentRepository;
+  private final ReportService reportService;
+  private final DocumentRepository documentRepository;
 
-    public DocumentService(DocumentRepository documentRepository) {
-        this.documentRepository = documentRepository;
+  @Transactional
+  public void saveDocument(final String contentType, String filePath) {
+    documentRepository.save(new Document(contentType, filePath));
+  }
+
+  @Transactional(readOnly = true)
+  public List<Document> getAllDocuments() {
+    return documentRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
+  public Report getRecentReport(Long documentId) {
+    Comparator<Report> comparator = Comparator.comparing(Report::getCreated);
+
+    return documentRepository.findById(documentId).orElseThrow().getReports().stream()
+        .max(comparator).orElseThrow();
+  }
+
+  public Document getById(long l) {
+    return documentRepository.findById(l).orElseThrow();
+  }
+
+  public List<Document> getAllNewDocuments() {
+    return documentRepository.findAllByDocumentStatus(DocumentStatus.NEW);
+  }
+
+  @Transactional
+  public void documentInProgress(Document document) {
+    document.setParseStartAt(Instant.now()); // TODO: check if it's set
+    document.setDocumentStatus(DocumentStatus.IN_PROGRESS);
+  }
+
+  @Transactional
+  public Report addReportToDocument(Document document, List<ValidationResult> validationResults) {
+    final var documentInSession = documentRepository.findById(document.getId()).orElseThrow();
+    boolean validationFailed = validationResults.stream().anyMatch(validationResult -> !validationResult.isValid());
+
+    if (validationFailed) {
+      validationFailed(documentInSession);
+    } else {
+      completed(documentInSession);
     }
 
-    @Transactional
-    public void saveDocument(final String contentType, String filePath) {
-        documentRepository.save(new Document(contentType, filePath));
-    }
+    final var report = reportService.createReport(validationResults);
+    documentInSession.getReports().add(report);
+    documentRepository.save(documentInSession);
 
-    @Transactional(readOnly = true)
-    public List<Document> getAllDocuments() {
-        return documentRepository.findAll();
-    }
+    return report;
+  }
 
-    public Document getById(long l) {
-        return documentRepository.findById(l).orElseThrow();
-    }
+  private void validationFailed(Document document) {
+    document.setDocumentStatus(DocumentStatus.VALIDATION_FAIL);
+  }
 
-    public List<Document> getAllNewDocuments() {
-        return documentRepository.findAllByDocumentStatus(DocumentStatus.NEW);
-    }
-
-    @Transactional
-    public void documentInProgress(Document document) {
-        document.setParseStartAt(LocalDateTime.now());
-        document.setDocumentStatus(DocumentStatus.IN_PROGRESS);
-    }
-
-    @Transactional
-    public void validationFailed(Document document) {
-        document.setDocumentStatus(DocumentStatus.VALIDATION_FAIL);
-    }
-
-    @Transactional
-    public void completed(Document document) {
-        document.setDocumentStatus(DocumentStatus.COMPLETED);
-    }
+  private void completed(Document document) {
+    document.setDocumentStatus(DocumentStatus.COMPLETED);
+  }
 }
