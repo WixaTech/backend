@@ -8,7 +8,6 @@ import org.springframework.scheduling.concurrent.CustomizableThreadFactory;
 import org.springframework.stereotype.Service;
 import pl.wixatech.hackyeahbackend.document.Document;
 import pl.wixatech.hackyeahbackend.document.DocumentService;
-import pl.wixatech.hackyeahbackend.document.DocumentStatus;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +25,7 @@ public class DocumentValidationWorker {
 
     @Scheduled(fixedDelay = 1000)
     public void execute() {
-        log.info("Checking if there is document to parse");
+        log.debug("Checking if there is document to parse");
         List<Document> allNewDocuments = documentService.getAllNewDocuments();
         if (allNewDocuments.isEmpty()) {
             log.debug("No new documents to parse");
