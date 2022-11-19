@@ -21,6 +21,9 @@ public class ValidationFieldMapper {
       case STRING -> objectMapper.readValue(validationField.getContent(), String.class);
       case INT -> objectMapper.readValue(validationField.getContent(), Integer.class);
       case DOUBLE -> objectMapper.readValue(validationField.getContent(), Double.class);
+      case BOOLEAN -> objectMapper.readValue(validationField.getContent(), Boolean.class);
+      default -> throw new IllegalStateException(
+          String.format("ValidationFieldType: %s not supported", validationField.getValidationFieldType()));
     };
   }
 }
