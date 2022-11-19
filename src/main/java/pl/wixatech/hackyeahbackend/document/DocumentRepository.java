@@ -1,0 +1,7 @@
+package pl.wixatech.hackyeahbackend.document;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DocumentRepository extends JpaRepository<Document, Long> {
+
+}

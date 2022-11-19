@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import pl.wixatech.hackyeahbackend.document.DocumentService;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -27,6 +28,8 @@ import static java.lang.System.out;
 @RestController
 @RequiredArgsConstructor
 public class FileController {
+    
+    private final DocumentService documentService;
 
     @PostMapping(path = "/upload", consumes = "multipart/form-data")
     public UploadFileResponse uploadFile(@RequestPart("file") MultipartFile file) {
@@ -44,6 +47,8 @@ public class FileController {
 
         out.println("Title: " + metadata.get("title"));
         out.println("Author: " + metadata.get("Author"));
+        documentService.saveDocument(metadata.get("dc:title"));
+        
         return new UploadFileResponse(true);
     }
 
