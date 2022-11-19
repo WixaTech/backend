@@ -37,9 +37,91 @@ public class ConfigInitBean {
 //
 //        configService.add(configValidation);
 
+        fileNameParams();
+        fileParams();
         technicalParams();
 
 
+    }
+
+    @SneakyThrows
+    private void fileParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("type")
+                .content(objectMapper.writeValueAsString("pdf"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("format")
+                .content(objectMapper.writeValueAsString("A4"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("orientation")
+                .content(objectMapper.writeValueAsString("VERTICAL"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("pdf_version")
+                .content(objectMapper.writeValueAsString(List.of("A-2", "A-4")))
+                .validationFieldType(ValidationFieldType.LIST)
+                .build());
+
+        validations.add(ValidationField.builder()
+                .keyName("margin_top")
+                .content(objectMapper.writeValueAsString("10"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("margin_bottom")
+                .content(objectMapper.writeValueAsString("8"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("margin_left")
+                .content(objectMapper.writeValueAsString("15"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("margin_right")
+                .content(objectMapper.writeValueAsString("15"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+
+        validations.add(ValidationField.builder()
+                .keyName("forbiden_restrictions")
+                .content(objectMapper.writeValueAsString(List.of("password", "print", "edition", "copy", "edit", "other_based_on_certification")))
+                .validationFieldType(ValidationFieldType.LIST)
+                .build());
+
+        addConfig("file_params", validations);
+    }
+
+    @SneakyThrows
+    private void fileNameParams() {
+        Set<ValidationField> validations = new HashSet<>();
+        validations.add(ValidationField.builder()
+                .keyName("forbiden_chars")
+                .content(objectMapper.writeValueAsString(List.of("~", "\"", "#", "%", "&", "*", ":", "<", ">", "?", "!", "/", "\\", "{", "|", "}")))
+                .validationFieldType(ValidationFieldType.LIST)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("trim")
+                .content(objectMapper.writeValueAsString(List.of("space_before", "space_after")))
+                .validationFieldType(ValidationFieldType.LIST)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("char_code")
+                .content(objectMapper.writeValueAsString("UTF-8"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("full_filename_length")
+                .content(objectMapper.writeValueAsString("255"))
+                .validationFieldType(ValidationFieldType.INT)
+                .build());
+        addConfig("filename_params", validations);
     }
 
     @SneakyThrows
@@ -48,7 +130,7 @@ public class ConfigInitBean {
         Set<ValidationField> validations = new HashSet<>();
         validations.add(ValidationField.builder()
                 .keyName("print_color")
-                .content(objectMapper.writeValueAsString(List.of("a", "b")))
+                .content(objectMapper.writeValueAsString(List.of("monochromatic", "color")))
                 .validationFieldType(ValidationFieldType.LIST)
                 .build());
         validations.add(ValidationField.builder()
@@ -60,6 +142,16 @@ public class ConfigInitBean {
                 .keyName("grammage")
                 .content(objectMapper.writeValueAsString("80"))
                 .validationFieldType(ValidationFieldType.INT)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("paper_format")
+                .content(objectMapper.writeValueAsString("A4"))
+                .validationFieldType(ValidationFieldType.STRING)
+                .build());
+        validations.add(ValidationField.builder()
+                .keyName("paper_color")
+                .content(objectMapper.writeValueAsString("white"))
+                .validationFieldType(ValidationFieldType.STRING)
                 .build());
         addConfig("technical_params", validations);
     }
