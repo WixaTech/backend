@@ -22,7 +22,7 @@ import static org.apache.pdfbox.pdmodel.common.PDRectangle.A4;
 public class FileParametersPlugin implements ValidationPluginWithInput {
     public static final String FORMAT = "format";
     private final ConfigService configService;
-    public static final String FILE_PARAMS = "fileParams";
+    public static final String FILE_PARAMS = "file_params";
     private final ValidationFieldMapper fieldMapperService;
 
     @Override

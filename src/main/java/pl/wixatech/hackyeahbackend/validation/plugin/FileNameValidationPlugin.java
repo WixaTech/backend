@@ -23,12 +23,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FileNameValidationPlugin implements ValidationPlugin {
 
-    public static final String GROUP_NAME = "fileName";
+    public static final String GROUP_NAME = "file_name";
 
-    public static final String FORBIDDEN_CHARS = "forbidenChars";
+    public static final String FORBIDDEN_CHARS = "forbiden_chars";
     public static final String TRIM = "trim";
-    public static final String CHAR_CODE = "charCode";
-    public static final String FULL_FILENAME_LENGTH = "fullFilenameLength";
+    public static final String CHAR_CODE = "char_code";
+    public static final String FULL_FILENAME_LENGTH = "full_filename_length";
     public static final String SPACE_BEFORE = "space_before";
     public static final String SPACE_AFTER = "space_after";
 
