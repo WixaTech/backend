@@ -15,6 +15,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.apache.tika:tika-core:2.6.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     implementation group: 'com.google.zxing', name: 'core', version: '3.5.1'
@@ -25,6 +26,10 @@ dependencies {
     implementation group: 'software.amazon.awssdk', name: 'lambda', version: '2.18.16'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-lambda', version: '1.12.341'
 
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    implementation 'org.projectlombok:lombok:1.18.24'
+    implementation 'org.apache.tika:tika-parsers:2.6.0'
+    implementation 'org.apache.tika:tika-parsers-standard-package:2.6.0'
     testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
 }
 
