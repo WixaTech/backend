@@ -1,4 +1,4 @@
-FROM amazoncorretto:11-alpine-jdk
+FROM amazoncorretto:17-alpine-jdk
 MAINTAINER pl.wixatech
 ENV APP_HOME=/usr/app/
 WORKDIR $APP_HOME
