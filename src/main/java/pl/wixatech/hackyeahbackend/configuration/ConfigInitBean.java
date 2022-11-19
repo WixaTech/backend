@@ -13,6 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static pl.wixatech.hackyeahbackend.validation.plugin.document.FileParametersPlugin.FILE_PARAMS;
+import static pl.wixatech.hackyeahbackend.validation.plugin.document.FileParametersPlugin.FORMAT;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -167,7 +170,7 @@ public class ConfigInitBean {
                 .validationFieldType(ValidationFieldType.STRING)
                 .build());
         validations.add(ValidationField.builder()
-                .keyName("format")
+                .keyName(FORMAT)
                 .content(objectMapper.writeValueAsString("A4"))
                 .validationFieldType(ValidationFieldType.STRING)
                 .build());
@@ -209,7 +212,7 @@ public class ConfigInitBean {
                 .validationFieldType(ValidationFieldType.LIST)
                 .build());
 
-        addConfig("file_params", validations);
+        addConfig(FILE_PARAMS, validations);
     }
 
     @SneakyThrows

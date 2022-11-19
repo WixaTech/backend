@@ -76,4 +76,8 @@ public class DocumentService {
   private void completed(Document document) {
     document.setDocumentStatus(DocumentStatus.VALID);
   }
+
+  public void error(Document document) {
+    document.setDocumentStatus(DocumentStatus.PROCESSING_ERROR);
+  }
 }
