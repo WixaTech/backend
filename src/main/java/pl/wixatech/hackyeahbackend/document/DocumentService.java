@@ -16,12 +16,17 @@ public class DocumentService {
   }
 
   @Transactional
-  public void saveDocument(final String contentType) {
-    documentRepository.save(new Document(contentType));
+  public void saveDocument(final String contentType, String filePath) {
+    documentRepository.save(new Document(contentType, filePath));
   }
   
   @Transactional(readOnly = true)
   public List<Document> getAllDocuments() {
     return documentRepository.findAll();
   }
+
+  public Document getById(long l) {
+    return documentRepository.findById(l).orElseThrow();
+  }
+
 }

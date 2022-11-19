@@ -1,5 +1,6 @@
 package pl.wixatech.hackyeahbackend.document;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +20,12 @@ import javax.persistence.Table;
 @ToString
 @EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 public class Document {
 
-  public Document(String contentType) {
+  public Document(String contentType, String filePath) {
     this.contentType = contentType;
+    this.filePath = filePath;
   }
 
   @Id
@@ -30,4 +33,7 @@ public class Document {
   private Long id;
   
   private String contentType;
+
+  private String filePath;
+
 }
