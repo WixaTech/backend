@@ -47,7 +47,7 @@ public class DocumentService {
 
   @Transactional
   public void documentInProgress(Document document) {
-    document.setParseStartAt(Instant.now());
+    document.setParseStartAt(Instant.now()); // TODO: check if it's set
     document.setDocumentStatus(DocumentStatus.IN_PROGRESS);
   }
 
