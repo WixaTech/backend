@@ -31,17 +31,17 @@ public class ValidatorEngineService {
                 .map(validationPlugin -> validationPlugin.validate(document))
                 .collect(Collectors.toList());
 
-        List<ValidationResult> validationResults1;
+        List<ValidationResult> validationResultsWithDocument;
         try (PDDocument doc = findPdDocument(document)) {
             if (doc == null) {
                 log.error("Document is null");
             }
 
-            validationResults1 = validationWithDocPluginList.stream()
+            validationResultsWithDocument = validationWithDocPluginList.stream()
                     .sorted(Comparator.comparing(ValidationPluginWithInput::getPriority))
                     .map(validationPluginWithInput -> validationPluginWithInput.validate(doc))
                     .toList();
-            validationResults.addAll(validationResults1);
+            validationResults.addAll(validationResultsWithDocument);
 
         } catch (IOException e) {
             documentService.error(document);

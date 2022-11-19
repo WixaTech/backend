@@ -49,7 +49,9 @@ public class ConfigInitBean {
         formParams();
         tintParams();
         imagesParams();
-        technicalParams();
+
+
+//        technicalParams();
 
 
     }
