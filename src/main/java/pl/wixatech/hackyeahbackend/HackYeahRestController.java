@@ -64,6 +64,11 @@ public class HackYeahRestController {
 
     return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(bufferedImage);
   }
+  
+  @GetMapping(value = "/test") 
+  public String test() {
+    return "test endpoint";
+  }
 
   private AWSLambda buildLambdaClient() {
     final var credentials = new BasicAWSCredentials(accessKey, secretKey);
