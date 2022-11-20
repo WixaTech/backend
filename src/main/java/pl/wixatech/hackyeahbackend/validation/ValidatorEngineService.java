@@ -47,8 +47,8 @@ public class ValidatorEngineService {
             validationResults.addAll(validationResultsWithDocument);
 
         } catch (IOException e) {
-            documentService.error(document);
-            throw new RuntimeException(e);
+            error(document);
+            return;
         }
 
         documentService.addReportToDocument(document, validationResults);
@@ -58,15 +58,25 @@ public class ValidatorEngineService {
         }
     }
 
-    private PDDocument findPdDocument(Document document) {
+    private PDDocument findPdDocument(Document document) throws IOException {
         PDDocument doc = null;
         File file = new File(document.getFilePath());
         try (InputStream inputStream = new FileInputStream(file)) {
 
             doc = PDDocument.load(inputStream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException();
         }
         return doc;
+    }
+
+    private void error(Document document) {
+        documentService.error(document);
+        documentService.addReportToDocument(document, List.of(ValidationResult.builder()
+                .valid(false)
+                .groupName("fileCoruption")
+                .messageErrors(List.of("This file is corrupted"))
+                .build()));
+        return;
     }
 }
