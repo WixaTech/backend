@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 @RequiredArgsConstructor
 public class DocumentValidationWorker {
 
-    private final ExecutorService executorService = Executors.newCachedThreadPool(new CustomizableThreadFactory("workerThread"));
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5, new CustomizableThreadFactory("workerThread"));
 
     private final DocumentService documentService;
     private final ValidatorEngineService validatorEngineService;
