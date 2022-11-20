@@ -40,20 +40,23 @@ public class ValidatorEngineService {
 
 
         List<ValidationResult> validationResults = validationPluginList.stream()
-                .sorted(Comparator.comparing(ValidationPlugin::getPriority))
-                .map(validationPlugin -> validationPlugin.validate(document))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(ValidationPlugin::getPriority))
+            .map(validationPlugin -> validationPlugin.validate(document))
+            .collect(Collectors.toList());
 
         List<ValidationResult> validationResultsWithDocument;
+
+        // TODO: check if its restricted
+
         try (PDDocument doc = findPdDocument(document)) {
             if (doc == null) {
                 log.error("Document is null");
             }
 
             validationResultsWithDocument = validationWithDocPluginList.stream()
-                    .sorted(Comparator.comparing(ValidationPluginWithInput::getPriority))
-                    .map(validationPluginWithInput -> validationPluginWithInput.validate(doc))
-                    .toList();
+                .sorted(Comparator.comparing(ValidationPluginWithInput::getPriority))
+                .map(validationPluginWithInput -> validationPluginWithInput.validate(doc))
+                .toList();
             validationResults.addAll(validationResultsWithDocument);
 
         } catch (IOException e) {
@@ -64,7 +67,12 @@ public class ValidatorEngineService {
         documentService.addReportToDocument(document, validationResults);
         Document byId = documentService.getById(document.getId());
         if (byId.getDocumentStatus().equals(DocumentStatus.VALID)) {
-            fileMetadataUpdaterService.updateMetadata(document);
+            try (PDDocument doc = findPdDocument(byId)) {
+                documentService.addMetadataToDocument(byId, doc);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            fileMetadataUpdaterService.updateMetadata(byId);
         }
     }
 

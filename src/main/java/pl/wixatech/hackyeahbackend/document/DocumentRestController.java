@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.wixatech.hackyeahbackend.document.dto.DocumentDTO;
-import pl.wixatech.hackyeahbackend.validation.report.Report;
+import pl.wixatech.hackyeahbackend.document.dto.ReportDTO;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -26,9 +26,13 @@ public class DocumentRestController {
         .collect(Collectors.toList());
   }
 
+  // TODO: return 404 when report invalid
   @GetMapping(value = "/{documentId}/recentReport")
-  public Report getRecentReport(@PathVariable("documentId") Long documentId) {
-    return documentService.getRecentReport(documentId);
+  public ReportDTO getRecentReport(@PathVariable("documentId") Long documentId) {
+    final var document = documentService.getById(documentId);
+    final var recentReport = documentService.getRecentReport(documentId);
+    return new ReportDTO(recentReport.getId(), recentReport.isSuccess(), recentReport.getCreated(), recentReport.getErrorGroups(),
+        document.getDocumentMetadata());
   }
 
   private DocumentDTO convertToDocumentDTO(Document document) {
