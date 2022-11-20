@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 @Service
 public class DocumentMetadataService {
 
-  public static final String ADDRESSEE_NAME = "addressee_name";
-  public static final String ADDRESSEE_SURNAME = "addressee_surname";
-  public static final String ADDRESSEE_STREET = "addressee_street";
-  public static final String ADDRESSEE_POST_CODE = "addressee_post_code";
-  public static final String ADDRESSEE_CITY = "addressee_city";
+  public static final String ADDRESSEE_NAME = "recipient_name";
+  public static final String ADDRESSEE_SURNAME = "recipient_surname";
+  public static final String ADDRESSEE_STREET = "recipient_street";
+  public static final String ADDRESSEE_POST_CODE = "recipient_post_code";
+  public static final String ADDRESSEE_CITY = "recipient_city";
   public static final String SENDER_NAME = "sender_name";
   public static final String SENDER_SURNAME = "sender_surname";
   public static final String SENDER_STREET = "sender_street";
@@ -129,7 +129,7 @@ public class DocumentMetadataService {
 
     final var unpRectangle = new Rectangle(0, 130, 300, 70);
     final var unpText = extractTextFromRegion(pdfDocument, unpRectangle);
-    final var unpValue = unpText.replace("UNP: ", "").replace("\n", "");
+    final var unpValue = unpText.replace("UNP: ", "").replace("\n", "").trim();
     otherMetadata.put(UNP, unpValue);
 
     final var caseNumberRectangle = new Rectangle(0, 210, 300, 20);
