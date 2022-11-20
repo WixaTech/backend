@@ -190,22 +190,22 @@ public class ConfigInitBean {
         validations.add(ValidationField.builder()
                 .keyName("margin_top")
                 .content(objectMapper.writeValueAsString("10"))
-                .validationFieldType(ValidationFieldType.STRING)
+                .validationFieldType(ValidationFieldType.INT)
                 .build());
         validations.add(ValidationField.builder()
                 .keyName("margin_bottom")
                 .content(objectMapper.writeValueAsString("8"))
-                .validationFieldType(ValidationFieldType.STRING)
+                .validationFieldType(ValidationFieldType.INT)
                 .build());
         validations.add(ValidationField.builder()
                 .keyName("margin_left")
                 .content(objectMapper.writeValueAsString("15"))
-                .validationFieldType(ValidationFieldType.STRING)
+                .validationFieldType(ValidationFieldType.INT)
                 .build());
         validations.add(ValidationField.builder()
                 .keyName("margin_right")
                 .content(objectMapper.writeValueAsString("15"))
-                .validationFieldType(ValidationFieldType.STRING)
+                .validationFieldType(ValidationFieldType.INT)
                 .build());
 
         validations.add(ValidationField.builder()
