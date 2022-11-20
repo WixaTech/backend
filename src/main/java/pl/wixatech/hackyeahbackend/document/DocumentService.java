@@ -78,7 +78,7 @@ public class DocumentService {
   public Document addMetadataToDocument(Document document, PDDocument doc) {
     final var metadata = metadataService.getMetadataFromDoc(doc);
     document.setDocumentMetadata(metadata);
-    return document;
+    return documentRepository.save(document);
   }
 
   private void validationFailed(Document document) {

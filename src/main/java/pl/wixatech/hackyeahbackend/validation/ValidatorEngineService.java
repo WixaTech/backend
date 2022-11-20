@@ -57,12 +57,12 @@ public class ValidatorEngineService {
         documentService.addReportToDocument(document, validationResults);
         Document byId = documentService.getById(document.getId());
         if (byId.getDocumentStatus().equals(DocumentStatus.VALID)) {
-            try (PDDocument doc = findPdDocument(document)) {
-                documentService.addMetadataToDocument(document, doc);
+            try (PDDocument doc = findPdDocument(byId)) {
+                documentService.addMetadataToDocument(byId, doc);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            fileMetadataUpdaterService.updateMetadata(document);
+            fileMetadataUpdaterService.updateMetadata(byId);
         }
     }
 
