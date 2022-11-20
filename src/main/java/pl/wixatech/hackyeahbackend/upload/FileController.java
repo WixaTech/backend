@@ -2,6 +2,11 @@ package pl.wixatech.hackyeahbackend.upload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,14 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 import pl.wixatech.hackyeahbackend.document.Document;
 import pl.wixatech.hackyeahbackend.document.DocumentService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static java.lang.System.out;
 
@@ -59,20 +65,31 @@ public class FileController {
     }
 
     @GetMapping("/download/{id}")
-    public void getTaskInstructionContent(@PathVariable Long id, HttpServletResponse response) throws IOException {
+    public ResponseEntity<Resource> getTaskInstructionContent(@PathVariable Long id) throws IOException {
         Document byId = documentService.getById(id);
         File file = new File(byId.getFilePath());
-        try {
-            // get your file as InputStream
-            InputStream is = new FileInputStream(file);
-            // copy it to response's OutputStream
-            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
-            response.setContentType("application/pdf");
-            response.flushBuffer();
-        } catch (IOException ex) {
-            log.info("Error writing file to output stream. Filename was '{}'", id, ex);
-            throw new RuntimeException("IOError writing file to output stream");
-        }
+        Path path = Paths.get(byId.getFilePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+        HttpHeaders header = new HttpHeaders();
+        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
+        return ResponseEntity.ok()
+                .headers(header)
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(resource);
+//        File file = new File(byId.getFilePath());
+//        try {
+//            // get your file as InputStream
+//            InputStream is = new FileInputStream(file);
+//            // copy it to response's OutputStream
+//            org.apache.commons.io.IOUtils.copy(is, response.getOutputStream());
+//            response.setContentType("application/pdf");
+//            response.set
+//            response.flushBuffer();
+//        } catch (IOException ex) {
+//            log.info("Error writing file to output stream. Filename was '{}'", id, ex);
+//            throw new RuntimeException("IOError writing file to output stream");
+//        }
     }
 
 }
