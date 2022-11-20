@@ -13,6 +13,19 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.ADDRESSEE_CITY;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.ADDRESSEE_NAME;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.ADDRESSEE_POST_CODE;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.ADDRESSEE_STREET;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.ADDRESSEE_SURNAME;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.CASE_NUMBER;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.SENDER_CITY;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.SENDER_NAME;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.SENDER_POST_CODE;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.SENDER_STREET;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.SENDER_SURNAME;
+import static pl.wixatech.hackyeahbackend.document.DocumentMetadataService.UNP;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -31,26 +44,22 @@ public class FileMetadataUpdaterService {
                 info = new PDDocumentInformation();
             }
 
-            info.setCustomMetadataValue("addressee_name", "test");
-            info.setCustomMetadataValue("addressee_surname", "test");
-            info.setCustomMetadataValue("addressee_street", "test");
-            info.setCustomMetadataValue("addressee_house_number", "test");
-            info.setCustomMetadataValue("addressee_local_number", "test");
-            info.setCustomMetadataValue("addressee_post_code", "test");
-            info.setCustomMetadataValue("addressee_city", "test");
-            info.setCustomMetadataValue("addressee_country", "test");
+            info.setCustomMetadataValue(ADDRESSEE_NAME, "test");
+            info.setCustomMetadataValue(ADDRESSEE_SURNAME, "test");
+            info.setCustomMetadataValue(ADDRESSEE_STREET, "test");
+            info.setCustomMetadataValue(ADDRESSEE_POST_CODE, "test");
+            info.setCustomMetadataValue(ADDRESSEE_CITY, "test");
 
-            info.setCustomMetadataValue("sender_name", "test");
-            info.setCustomMetadataValue("sender_surname", "test");
-            info.setCustomMetadataValue("sender_street", "test");
-            info.setCustomMetadataValue("sender_house_number", "test");
-            info.setCustomMetadataValue("sender_local_number", "test");
-            info.setCustomMetadataValue("sender_post_code", "test");
-            info.setCustomMetadataValue("sender_city", "test");
-            info.setCustomMetadataValue("sender_country", "test");
+            info.setCustomMetadataValue(SENDER_NAME, "test");
+            info.setCustomMetadataValue(SENDER_SURNAME, "test");
+            info.setCustomMetadataValue(SENDER_STREET, "test");
+            info.setCustomMetadataValue(SENDER_POST_CODE, "test");
+            info.setCustomMetadataValue(SENDER_CITY, "test");
 
-            info.setCustomMetadataValue("unp", "test");
-            info.setCustomMetadataValue("case_number", "test");
+            info.setCustomMetadataValue(UNP, "test");
+            info.setCustomMetadataValue(CASE_NUMBER, "test");
+
+            // TODO: podpis???
             info.setCustomMetadataValue("signature_data", "test");
 
             doc.save(document.getFilePath());
