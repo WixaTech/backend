@@ -28,7 +28,17 @@ public class ValidatorEngineService {
     private final List<ValidationPluginWithInput> validationWithDocPluginList;
     private final DocumentService documentService;
     private final FileMetadataUpdaterService fileMetadataUpdaterService;
+    private final FormatValidator formatValidator;
     public void execute(Document document) {
+        //TODO add validation for checking formats
+
+        ValidationResult firstValidate = formatValidator.validate(document);
+        if (!firstValidate.isValid()) {
+            documentService.addReportToDocument(document, List.of(firstValidate));
+            return;
+        }
+
+
         List<ValidationResult> validationResults = validationPluginList.stream()
                 .sorted(Comparator.comparing(ValidationPlugin::getPriority))
                 .map(validationPlugin -> validationPlugin.validate(document))
