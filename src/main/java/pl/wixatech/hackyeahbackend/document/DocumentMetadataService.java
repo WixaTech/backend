@@ -32,13 +32,20 @@ public class DocumentMetadataService {
 
   private static final Set<String> expectedFooterMetadata = Set.of("e-mail: ", "ePUAP ");
 
-  private static final Set<String> expectedHeaderMetadata = Set.of("e-mail: ", "ePUAP ");
 
   public Map<String, String> getMetadataFromDoc(PDDocument pdfDocument) {
     Map<String, String> footerMetadata = extractMetadataFromFooter(pdfDocument);
+    Map<String, String> headerMetadata = extractMetadataFromHeader(pdfDocument);
+    Map<String, String> otherMetadata = extractOtherMetadata(pdfDocument);
 
-    return footerMetadata;
+    final var resultMetadata = new HashMap<String, String>();
+    resultMetadata.putAll(footerMetadata);
+    resultMetadata.putAll(headerMetadata);
+    resultMetadata.putAll(otherMetadata);
+
+    return resultMetadata;
   }
+
 
   // adresat (Imię i nazwisko/nazwa, adres pocztowy, NIP/PESEL)
   // nadawca ( nazwa, adres pocztowy, e-mail, skrytka e-PUAP, nr telefonu)
@@ -46,7 +53,6 @@ public class DocumentMetadataService {
   // numer sprawy
   // data na piśmie
   // imię i nawisko osoby podpisującej doka
-
   private Map<String, String> extractMetadataFromFooter(PDDocument pdfDocument) {
     final var footerRectangle = new Rectangle(0, 780, 530, 110);
 
@@ -73,17 +79,65 @@ public class DocumentMetadataService {
   }
 
   private Map<String, String> getAdreseeMetadata(PDDocument pdfDocument) {
-    final var adreseeRectangle = new Rectangle(400, 80, 300, 80);
+    final var adreseeRectangle = new Rectangle(300, 180, 300, 280);
     final var adreseeText = extractTextFromRegion(pdfDocument, adreseeRectangle);
 
-    return Map.of("adresee", adreseeText);
+    final var adreseeParts = adreseeText.split("\n");
+
+    final var adreseeMetadata = new HashMap<String, String>();
+
+    if (adreseeParts.length >= 3) {
+      final var nameAndSurname = adreseeParts[0];
+      final var nameAndSurnameParts = nameAndSurname.split(" ");
+      if (nameAndSurnameParts.length >= 2) {
+        adreseeMetadata.put(ADDRESSEE_NAME, nameAndSurnameParts[0]);
+        adreseeMetadata.put(ADDRESSEE_SURNAME, nameAndSurnameParts[1]);
+      }
+
+      final var street = adreseeParts[1];
+      final var postalCodeAndCity = adreseeParts[2];
+      final var postalCodeAndCityParts = postalCodeAndCity.split(" ");
+      if (postalCodeAndCityParts.length >= 2) {
+        adreseeMetadata.put(ADDRESSEE_POST_CODE, postalCodeAndCityParts[0]);
+        adreseeMetadata.put(ADDRESSEE_CITY, postalCodeAndCityParts[1]);
+      }
+
+      adreseeMetadata.put(ADDRESSEE_STREET, street);
+    }
+
+    return adreseeMetadata;
   }
 
   private Map<String, String> getSenderMetadata(PDDocument pdfDocument) {
     final var senderRectangle = new Rectangle(0, 230, 300, 80);
     final var senderText = extractTextFromRegion(pdfDocument, senderRectangle);
 
-    return Map.of("sender", senderText);
+    final var senderWithoutContact = senderText.replace(senderText, "Kontakt: ");
+    final var senderTextParts = senderWithoutContact.split("\n");
+
+    final var senderMetadata = new HashMap<String, String>();
+    if (senderTextParts.length >= 2) {
+      senderMetadata.put(SENDER_NAME, senderTextParts[0]);
+      senderMetadata.put(SENDER_SURNAME, senderTextParts[1]);
+    }
+
+    return senderMetadata;
+  }
+
+  private Map<String, String> extractOtherMetadata(PDDocument pdfDocument) {
+    final var otherMetadata = new HashMap<String, String>();
+
+    final var unpRectangle = new Rectangle(0, 130, 300, 70);
+    final var unpText = extractTextFromRegion(pdfDocument, unpRectangle);
+    final var unpValue = unpText.replace("UNP: ", "").replace("\n", "");
+    otherMetadata.put(UNP, unpValue);
+
+    final var caseNumberRectangle = new Rectangle(0, 210, 300, 20);
+    final var caseNumberText = extractTextFromRegion(pdfDocument, caseNumberRectangle);
+    final var caseNumberValue = caseNumberText.replace("Znak sprawy:", "").trim();
+    otherMetadata.put(CASE_NUMBER, caseNumberValue);
+
+    return otherMetadata;
   }
 
   @SneakyThrows

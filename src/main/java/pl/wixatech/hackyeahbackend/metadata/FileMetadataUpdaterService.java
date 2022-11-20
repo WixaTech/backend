@@ -44,20 +44,22 @@ public class FileMetadataUpdaterService {
                 info = new PDDocumentInformation();
             }
 
-            info.setCustomMetadataValue(ADDRESSEE_NAME, "test");
-            info.setCustomMetadataValue(ADDRESSEE_SURNAME, "test");
-            info.setCustomMetadataValue(ADDRESSEE_STREET, "test");
-            info.setCustomMetadataValue(ADDRESSEE_POST_CODE, "test");
-            info.setCustomMetadataValue(ADDRESSEE_CITY, "test");
+            final var documentMetadata = document.getDocumentMetadata();
 
-            info.setCustomMetadataValue(SENDER_NAME, "test");
-            info.setCustomMetadataValue(SENDER_SURNAME, "test");
+            info.setCustomMetadataValue(ADDRESSEE_NAME, documentMetadata.getOrDefault(ADDRESSEE_NAME, ""));
+            info.setCustomMetadataValue(ADDRESSEE_SURNAME, documentMetadata.getOrDefault(ADDRESSEE_SURNAME, ""));
+            info.setCustomMetadataValue(ADDRESSEE_STREET, documentMetadata.getOrDefault(ADDRESSEE_STREET, ""));
+            info.setCustomMetadataValue(ADDRESSEE_POST_CODE, documentMetadata.getOrDefault(ADDRESSEE_POST_CODE, ""));
+            info.setCustomMetadataValue(ADDRESSEE_CITY, documentMetadata.getOrDefault(ADDRESSEE_CITY, ""));
+
+            info.setCustomMetadataValue(SENDER_NAME, documentMetadata.getOrDefault(SENDER_NAME, ""));
+            info.setCustomMetadataValue(SENDER_SURNAME, documentMetadata.getOrDefault(SENDER_SURNAME, ""));
             info.setCustomMetadataValue(SENDER_STREET, "test");
             info.setCustomMetadataValue(SENDER_POST_CODE, "test");
             info.setCustomMetadataValue(SENDER_CITY, "test");
 
-            info.setCustomMetadataValue(UNP, "test");
-            info.setCustomMetadataValue(CASE_NUMBER, "test");
+            info.setCustomMetadataValue(UNP, documentMetadata.getOrDefault(UNP, ""));
+            info.setCustomMetadataValue(CASE_NUMBER, documentMetadata.getOrDefault(CASE_NUMBER, ""));
 
             // TODO: podpis???
             info.setCustomMetadataValue("signature_data", "test");
