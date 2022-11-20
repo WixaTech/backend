@@ -6,7 +6,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.text.PDFTextStripperByArea;
 import org.springframework.stereotype.Service;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,14 +112,20 @@ public class DocumentMetadataService {
     final var senderRectangle = new Rectangle(0, 230, 300, 80);
     final var senderText = extractTextFromRegion(pdfDocument, senderRectangle);
 
-    final var senderWithoutContact = senderText.replace(senderText, "Kontakt: ");
+    final var senderWithoutContact = senderText.replace("Kontakt: ", "");
     final var senderTextParts = senderWithoutContact.split("\n");
 
     final var senderMetadata = new HashMap<String, String>();
-    if (senderTextParts.length >= 2) {
-      senderMetadata.put(SENDER_NAME, senderTextParts[0]);
-      senderMetadata.put(SENDER_SURNAME, senderTextParts[1]);
+
+    if (senderTextParts.length >= 4) {
+      final var senderTextPartsExtract = senderTextParts[0].split(" ");
+
+      if (senderTextPartsExtract.length >= 2) {
+        senderMetadata.put(SENDER_NAME, senderTextPartsExtract[0]);
+        senderMetadata.put(SENDER_SURNAME, senderTextPartsExtract[1]);
+      }
     }
+
 
     return senderMetadata;
   }
