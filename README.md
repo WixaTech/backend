@@ -1,25 +1,58 @@
-# qr-code-encoder
+# Project demo link
 
-# env variables
-ACCESS_KEY - aws access key
-SECRET_KEY - aws secret key
+https://karolina.place/SendHybrid/
 
-# building container and pushing to ecr
-./gradlew build
+# Frameworks, compilers, runtime environment, libraries
 
-docker build --tag=qr-code:latest .
-``
-docker run -d -p 8080:8080 qr-code:latest -e ACCESS_KEY=xxxxxx -e SECRET_KEY=xxxxxx
+* JDK17
+* Spring
+* Hibernate
+* JavaScript
+* React
+* PDDocument
 
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 242422306324.dkr.ecr.us-east-1.amazonaws.com
+# User Manual
 
-docker tag qr-code:latest 242422306324.dkr.ecr.us-east-1.amazonaws.com/qr-code:latest
+From *Documents* tab user can access the list of uploaded documents, see their status and validation report, and Add new
+documents.
 
-docker push 242422306324.dkr.ecr.us-east-1.amazonaws.com/qr-code:latest
+By clicking the *See report* button on the validated document row, user can see the validation report. If file is
+repairable the system offer a fix with the button *Repair file automaticaly. Report of the correct file lists the
+metadata, and offers to download the PDF file with automatically set headers with *Download file* button.
 
-# in aws
+It is possible to check current validation parameters by going to the *Admin settings* tab.
 
-update environment variables of container which are included in Paramater Store
+# How to run
+
+## Backend
+
+The simplest approach is to run the *main* function in the `HackYeahBackendApplication` from the IntelliJ.
+
+Another way is to run it with the Docker container, you need to perform the following steps to do so:
+
+* `./gradlew build`
+* go to `build/libs` directory within project
+* `java -jar ./HackYeahBackend-0.0.1-SNAPSHOT-boot.jar`
+
+## Frontend
+
+To change the environment pointed by the frontend, follow the instructions described in the *Administrator guide*
+section.
+
+# TODO
+
+# Administrator guide
+
+The Backend environment pointed by the frontend can be changed in ... #TODO
+
+# Architecture
+
+Backend part was deployed to Heroku with use of the CI/CD pipeline configured in the GitHub repository.
+
+The idea of the app was to offer non-blocking uploads. Meaning that the client doesn't have to wait until the documents
+are validated. Core of the documents processing happens in the `ValidatorEngineService`. Validation flow consists of
+multiple chains, which can be added by creating components implementing `ValidationPlugin`
+or `ValidationPluginWithInput` interfaces.
 
 # heroku
 
