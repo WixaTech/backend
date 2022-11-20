@@ -1,6 +1,7 @@
 package pl.wixatech.hackyeahbackend.document;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.wixatech.hackyeahbackend.validation.plugin.ValidationResult;
@@ -17,6 +18,8 @@ import java.util.List;
 public class DocumentService {
 
   private final ReportService reportService;
+  private final DocumentMetadataService metadataService;
+
   private final DocumentRepository documentRepository;
 
   @Transactional
@@ -37,10 +40,12 @@ public class DocumentService {
         .max(comparator).orElseThrow();
   }
 
+  @Transactional(readOnly = true)
   public Document getById(long l) {
     return documentRepository.findById(l).orElseThrow();
   }
 
+  @Transactional(readOnly = true)
   public List<Document> getAllNewDocuments() {
     return documentRepository.findAllByDocumentStatus(DocumentStatus.UNVERIFIED);
   }
@@ -67,6 +72,13 @@ public class DocumentService {
     documentRepository.save(documentInSession);
 
     return report;
+  }
+
+  @Transactional
+  public Document addMetadataToDocument(Document document, PDDocument doc) {
+    final var metadata = metadataService.getMetadataFromDoc(doc);
+    document.setDocumentMetadata(metadata);
+    return document;
   }
 
   private void validationFailed(Document document) {

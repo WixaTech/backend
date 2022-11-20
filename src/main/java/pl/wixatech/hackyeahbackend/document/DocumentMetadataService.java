@@ -7,10 +7,17 @@ import org.apache.pdfbox.text.PDFTextStripperByArea;
 import org.springframework.stereotype.Service;
 
 import java.awt.Rectangle;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentMetadataService {
+
+  private static final Set<String> expectedFooterMetadata = Set.of("e-mail: ", "ePUAP ");
 
   public Map<String, String> getMetadataFromDoc(PDDocument pdfDocument) {
     Map<String, String> footerMetadata = extractMetadataFromFooter(pdfDocument);
@@ -18,10 +25,29 @@ public class DocumentMetadataService {
     return footerMetadata;
   }
 
+  // adresat (Imię i nazwisko/nazwa, adres pocztowy, NIP/PESEL)
+  // nadawca ( nazwa, adres pocztowy, e-mail, skrytka e-PUAP, nr telefonu)
+  // UNP
+  // numer sprawy
+  // data na piśmie
+  // imię i nawisko osoby podpisującej doka
+
   @SneakyThrows
   private Map<String, String> extractMetadataFromFooter(PDDocument pdfDocument) {
-    final var footerRectangle = new Rectangle(0, 780, 490, 110);
+    final var footerRectangle = new Rectangle(0, 780, 530, 110);
 
+    String actualTextContent = extractTextFromRegion(pdfDocument, footerRectangle);
+
+    return Arrays.stream(actualTextContent.split("\n"))
+        .flatMap(line -> Arrays.stream(line.split("●")))
+        .filter(value -> expectedFooterMetadata.stream().anyMatch(value::contains))
+        .collect(Collectors.toMap(fragment -> expectedFooterMetadata.stream().filter(fragment::contains).findAny().orElseThrow(),
+            Function.identity())).entrySet()
+        .stream()
+        .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().replace(entry.getKey(), "")));
+  }
+
+  private String extractTextFromRegion(PDDocument pdfDocument, Rectangle footerRectangle) throws IOException {
     PDFTextStripperByArea stripper = new PDFTextStripperByArea();
     stripper.setSortByPosition(true);
 
@@ -33,8 +59,6 @@ public class DocumentMetadataService {
 
     // extract content from the page
     stripper.extractRegions(firstPage);
-    String actualTextContent = stripper.getTextForRegion("class1");
-
-    return Map.of("footer", actualTextContent);
+    return stripper.getTextForRegion("class1");
   }
 }
