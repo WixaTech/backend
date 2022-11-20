@@ -27,20 +27,23 @@ public class ValidatorEngineService {
     private final DocumentService documentService;
     public void execute(Document document) {
         List<ValidationResult> validationResults = validationPluginList.stream()
-                .sorted(Comparator.comparing(ValidationPlugin::getPriority))
-                .map(validationPlugin -> validationPlugin.validate(document))
-                .collect(Collectors.toList());
+            .sorted(Comparator.comparing(ValidationPlugin::getPriority))
+            .map(validationPlugin -> validationPlugin.validate(document))
+            .collect(Collectors.toList());
 
         List<ValidationResult> validationResultsWithDocument;
+
+        // TODO: check if its restricted
+
         try (PDDocument doc = findPdDocument(document)) {
             if (doc == null) {
                 log.error("Document is null");
             }
 
             validationResultsWithDocument = validationWithDocPluginList.stream()
-                    .sorted(Comparator.comparing(ValidationPluginWithInput::getPriority))
-                    .map(validationPluginWithInput -> validationPluginWithInput.validate(doc))
-                    .toList();
+                .sorted(Comparator.comparing(ValidationPluginWithInput::getPriority))
+                .map(validationPluginWithInput -> validationPluginWithInput.validate(doc))
+                .toList();
             validationResults.addAll(validationResultsWithDocument);
 
         } catch (IOException e) {

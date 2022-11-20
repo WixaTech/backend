@@ -12,14 +12,19 @@ import org.hibernate.annotations.FetchMode;
 import pl.wixatech.hackyeahbackend.validation.report.Report;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.MapKeyJoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.Instant;
+import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -57,4 +62,12 @@ public class Document {
   @OneToMany(cascade = CascadeType.ALL)
   @Fetch(FetchMode.JOIN)
   private Set<Report> reports;
+
+  @ElementCollection
+  @CollectionTable(name = "document_metadata")
+  @MapKeyJoinColumn(name = "document_metadata_id")
+  @Column(name = "document_metadata_map")
+  private Map<String, String> documentMetadata;
+
+
 }

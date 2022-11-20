@@ -26,6 +26,7 @@ public class DocumentRestController {
         .collect(Collectors.toList());
   }
 
+  // TODO: return 404 when report invalid
   @GetMapping(value = "/{documentId}/recentReport")
   public Report getRecentReport(@PathVariable("documentId") Long documentId) {
     return documentService.getRecentReport(documentId);
