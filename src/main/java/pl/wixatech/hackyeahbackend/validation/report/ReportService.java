@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static pl.wixatech.hackyeahbackend.validation.plugin.FileNameValidationPlugin.GROUP_NAME;
+
 @Service
 @RequiredArgsConstructor
 public class ReportService {
+  private List<String> recoverableGroup = List.of(GROUP_NAME);
 
   @Transactional
   public Report createReport(List<ValidationResult> validationResults) {
@@ -23,15 +26,19 @@ public class ReportService {
 
   private Set<ErrorGroup> getErrorGroups(List<ValidationResult> validationResults) {
     return validationResults.stream().collect(Collectors.groupingBy(ValidationResult::getGroupName))
-        .entrySet()
-        .stream()
-        .filter(entry -> !getMessagesInGroup(entry).isEmpty())
-        .map(entry -> new ErrorGroup(entry.getKey(), getMessagesInGroup(entry)))
-        .collect(Collectors.toSet());
+            .entrySet()
+            .stream()
+            .filter(entry -> !getMessagesInGroup(entry).isEmpty())
+            .map(entry -> new ErrorGroup(entry.getKey(), getMessagesInGroup(entry), isEntryInRecoverableGroup(entry.getKey())))
+            .collect(Collectors.toSet());
+  }
+
+  private boolean isEntryInRecoverableGroup(String key) {
+    return recoverableGroup.contains(key);
   }
 
   private List<String> getMessagesInGroup(java.util.Map.Entry<String, List<ValidationResult>> entry) {
     return entry.getValue().stream().map(ValidationResult::getMessageErrors).flatMap(
-        Collection::stream).collect(Collectors.toList());
+            Collection::stream).collect(Collectors.toList());
   }
 }

@@ -92,4 +92,8 @@ public class DocumentService {
   public void error(Document document) {
     document.setDocumentStatus(DocumentStatus.PROCESSING_ERROR);
   }
+
+  public void save(Document document) {
+    documentRepository.save(document);
+  }
 }

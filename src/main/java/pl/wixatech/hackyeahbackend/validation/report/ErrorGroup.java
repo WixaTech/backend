@@ -24,9 +24,10 @@ import java.util.List;
 @AllArgsConstructor
 public class ErrorGroup {
 
-  public ErrorGroup(String groupName, List<String> messages) {
+  public ErrorGroup(String groupName, List<String> messages, boolean recoverable) {
     this.groupName = groupName;
     this.messages = messages;
+    this.recoverable = recoverable;
   }
 
   @Id
@@ -38,4 +39,5 @@ public class ErrorGroup {
   @ElementCollection
   private List<String> messages;
 
+  private boolean recoverable = false;
 }
