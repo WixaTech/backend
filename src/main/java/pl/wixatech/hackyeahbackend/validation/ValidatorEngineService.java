@@ -6,6 +6,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import pl.wixatech.hackyeahbackend.document.Document;
 import pl.wixatech.hackyeahbackend.document.DocumentService;
+import pl.wixatech.hackyeahbackend.document.DocumentStatus;
+import pl.wixatech.hackyeahbackend.metadata.FileMetadataUpdaterService;
 import pl.wixatech.hackyeahbackend.validation.plugin.ValidationPlugin;
 import pl.wixatech.hackyeahbackend.validation.plugin.ValidationPluginWithInput;
 import pl.wixatech.hackyeahbackend.validation.plugin.ValidationResult;
@@ -25,6 +27,7 @@ public class ValidatorEngineService {
     private final List<ValidationPlugin> validationPluginList;
     private final List<ValidationPluginWithInput> validationWithDocPluginList;
     private final DocumentService documentService;
+    private final FileMetadataUpdaterService fileMetadataUpdaterService;
     public void execute(Document document) {
         List<ValidationResult> validationResults = validationPluginList.stream()
                 .sorted(Comparator.comparing(ValidationPlugin::getPriority))
@@ -48,8 +51,11 @@ public class ValidatorEngineService {
             throw new RuntimeException(e);
         }
 
-
         documentService.addReportToDocument(document, validationResults);
+        Document byId = documentService.getById(document.getId());
+        if (byId.getDocumentStatus().equals(DocumentStatus.VALID)) {
+            fileMetadataUpdaterService.updateMetadata(document);
+        }
     }
 
     private PDDocument findPdDocument(Document document) {
