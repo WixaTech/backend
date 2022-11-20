@@ -74,4 +74,6 @@ public class FileParametersPlugin implements ValidationPluginWithInput {
             isLandscape = !isLandscape;
         return !isLandscape;
     }
+
+
 }

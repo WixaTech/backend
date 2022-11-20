@@ -6,6 +6,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.stereotype.Service;
 import pl.wixatech.hackyeahbackend.document.Document;
 import pl.wixatech.hackyeahbackend.document.DocumentService;
+import pl.wixatech.hackyeahbackend.document.DocumentStatus;
+import pl.wixatech.hackyeahbackend.metadata.FileMetadataUpdaterService;
 import pl.wixatech.hackyeahbackend.validation.plugin.ValidationPlugin;
 import pl.wixatech.hackyeahbackend.validation.plugin.ValidationPluginWithInput;
 import pl.wixatech.hackyeahbackend.validation.plugin.ValidationResult;
@@ -25,6 +27,7 @@ public class ValidatorEngineService {
     private final List<ValidationPlugin> validationPluginList;
     private final List<ValidationPluginWithInput> validationWithDocPluginList;
     private final DocumentService documentService;
+    private final FileMetadataUpdaterService fileMetadataUpdaterService;
     public void execute(Document document) {
         List<ValidationResult> validationResults = validationPluginList.stream()
             .sorted(Comparator.comparing(ValidationPlugin::getPriority))
@@ -47,23 +50,36 @@ public class ValidatorEngineService {
             validationResults.addAll(validationResultsWithDocument);
 
         } catch (IOException e) {
-            documentService.error(document);
-            throw new RuntimeException(e);
+            error(document);
+            return;
         }
 
-
         documentService.addReportToDocument(document, validationResults);
+        Document byId = documentService.getById(document.getId());
+        if (byId.getDocumentStatus().equals(DocumentStatus.VALID)) {
+            fileMetadataUpdaterService.updateMetadata(document);
+        }
     }
 
-    private PDDocument findPdDocument(Document document) {
+    private PDDocument findPdDocument(Document document) throws IOException {
         PDDocument doc = null;
         File file = new File(document.getFilePath());
         try (InputStream inputStream = new FileInputStream(file)) {
 
             doc = PDDocument.load(inputStream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IOException();
         }
         return doc;
+    }
+
+    private void error(Document document) {
+        documentService.error(document);
+        documentService.addReportToDocument(document, List.of(ValidationResult.builder()
+                .valid(false)
+                .groupName("fileCoruption")
+                .messageErrors(List.of("This file is corrupted"))
+                .build()));
+        return;
     }
 }
