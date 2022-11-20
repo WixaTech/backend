@@ -1,6 +1,8 @@
 package pl.wixatech.hackyeahbackend.upload;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import static java.lang.System.out;
 
@@ -48,10 +51,23 @@ public class FileController {
     }
 
     @GetMapping(path = "/document/{id}")
-    public String getFile (@PathVariable Long id){
+    public String getFile(@PathVariable Long id) {
         Document byId = documentService.getById(id);
         File file = new File(byId.getFilePath());
         return file.getName();
+    }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> getTaskInstructionContent(@PathVariable Long id) throws IOException {
+        Document byId = documentService.getById(id);
+        File file = new File(byId.getFilePath());
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+
+        return ResponseEntity
+                .ok()
+                .contentLength(fileContent.length)
+                .contentType(MediaType.asMediaType(MediaType.APPLICATION_PDF))
+                .body(fileContent);
     }
 
 }
