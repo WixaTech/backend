@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecoverController {
     private final RecoverService recoverService;
 
-    @PostMapping(path = "/document/{id}/recover")
+    @PostMapping(path = "/documents/{id}/recover")
     public void recover(@PathVariable Long id) {
         recoverService.recover(id);
     }
